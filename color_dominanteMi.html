@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Dominante</title>
+    <style>
+      .colorDiv{
+        padding: 25px;
+        margin: 0 auto;
+      }
+    </style>
+</head>
+<body>
+
+  <div class="colorDiv">
+    <img class="scream" src="img_the_scream.jpg" alt="The Scream">
+  </div>
+
+  <div class="colorDiv">
+    <img class="scream" src="average_image.jpg" alt="The Scream">
+  </div>
+
+<script>
+const d = document;
+
+function colorDominante(img, colorDiv) {
+  const $img = d.querySelectorAll(img),
+        $colorDiv = d.querySelectorAll(colorDiv);
+  
+  // console.log($img, $colorDiv);
+  $img.forEach((el, i) => {
+
+  let a = d.createAttribute('data-color');
+  a.value = `myColor${i}`;
+  $colorDiv[i].setAttributeNode(a);
+
+  el.onload = function() {
+
+    let $canvasCreate = document.createElement("canvas");
+    $canvasCreate.id = `myColor${i}`;
+    d.body.insertBefore($canvasCreate, $colorDiv[i]);
+
+    let $canvas = d.getElementById(`myColor${i}`),
+        ctx = $canvas.getContext("2d"),
+        r=0, g=0, b=0, count = 0, data;
+
+    $canvas.width = el.width;
+    $canvas.height = el.height;
+
+    // Opcional -----------
+    $colorDiv[i].style.width = `${el.width}px`;
+    $colorDiv[i].style.height = `${el.height}px`;
+    // Opcional -----------
+
+    ctx.drawImage(el, 0, 0);
+    let imgData = ctx.getImageData(0, 0, el.width, el.height);
+    data = imgData.data;
+    // console.log(data);
+
+    for(o = 0, n = data.length; o < n; o += 4) {
+      ++count;
+      r += data[o];
+      g += data[o+1];
+      b += data[o+2];
+    }
+    r = ~~(r/count);
+    g = ~~(g/count);
+    b = ~~(b/count);
+    
+    let $idModal = d.getElementById($colorDiv[i].getAttribute("data-color"));
+
+    ($idModal.id === $colorDiv[i].getAttribute("data-color")) ? $colorDiv[i].style.backgroundColor = `rgb(${r} ${g} ${b})` : $colorDiv[i].style.backgroundColor = `#f7f7fb`;
+    $canvas.remove();
+    
+  };
+    
+  });
+  
+}
+colorDominante(".scream", ".colorDiv");
+
+</script>
+
+</body>
+</html>
